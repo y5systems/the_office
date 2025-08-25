@@ -1,0 +1,164 @@
+{
+  "projectName": "TheOffice Web3 Learn2Earn App",
+  "description": "Pixelated Web3 Learn2Earn task management application on Celo blockchain with admin functionality",
+  "version": "1.0.0",
+  "framework": "Next.js 15",
+  "styling": "Tailwind CSS",
+  "features": [
+    "Admin Dashboard",
+    "Task Management",
+    "User Management",
+    "Mobile-First Design",
+    "Pixel Art Aesthetic",
+    "Web3 Integration Ready"
+  ],
+  "fileStructure": {
+    "app": {
+      "layout.tsx": {
+        "type": "layout",
+        "description": "Root layout with AppProvider wrapper",
+        "code": "import type React from \"react\"\nimport type { Metadata } from \"next\"\nimport { Inter } from \"next/font/google\"\nimport { AppProvider } from \"@/components/providers/app-provider\"\nimport \"./globals.css\"\n\nconst inter = Inter({ subsets: [\"latin\"] })\n\nexport const metadata: Metadata = {\n  title: \"TheOffice\",\n  description: \"Web3 Learn2Earn Task Management App\",\n}\n\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode\n}) {\n  return (\n    <html lang=\"en\">\n      <body className={inter.className}>\n        <AppProvider>{children}</AppProvider>\n      </body>\n    </html>\n  )\n}"
+      },
+      "page.tsx": {
+        "type": "page",
+        "description": "Main application page with admin dashboard",
+        "code": "\"use client\"\n\nimport { useState, useEffect } from \"react\"\nimport { useApp } from \"@/components/providers/app-provider\"\nimport Header from \"@/components/Header\"\nimport TabNavigation from \"@/components/TabNavigation\"\nimport TasksView from \"@/components/TasksView\"\nimport ProgressView from \"@/components/ProgressView\"\nimport AdminDashboard from \"@/components/AdminDashboard\"\nimport ProfileModal from \"@/components/ProfileModal\"\nimport BottomNavigation from \"@/components/BottomNavigation\"\n\nexport default function Home() {\n  const { user, connectWallet } = useApp()\n  const [activeTab, setActiveTab] = useState<\"tasks\" | \"progress\">(\"tasks\")\n  const [showProfile, setShowProfile] = useState(false)\n  const [selectedCategory, setSelectedCategory] = useState(\"ALL\")\n  const [selectedFilter, setSelectedFilter] = useState(\"ALL\")\n\n  // Auto-connect as admin on load\n  useEffect(() => {\n    if (!user) {\n      connectWallet(\"admin\")\n    }\n  }, [user, connectWallet])\n\n  if (!user) {\n    return (\n      <div className=\"min-h-screen bg-gray-900 flex justify-center\">\n        <div className=\"w-full max-w-md bg-cream relative border-l-4 border-r-4 border-black min-h-screen flex items-center justify-center\">\n          <div className=\"pixel-card text-center\">\n            <h1 className=\"pixel-font text-lg mb-4\">👑 ADMIN LOGIN</h1>\n            <p className=\"pixel-font text-xs mb-4\">Connecting as System Administrator...</p>\n            <div className=\"pixel-border bg-purple-200 p-3\">\n              <span className=\"pixel-font text-xs\">Loading Admin Panel...</span>\n            </div>\n          </div>\n        </div>\n      </div>\n    )\n  }\n\n  return (\n    <div className=\"min-h-screen bg-gray-900 flex justify-center\">\n      <div className=\"w-full max-w-md bg-cream relative border-l-4 border-r-4 border-black min-h-screen\">\n        <Header onProfileClick={() => setShowProfile(true)} />\n\n        <div className=\"pb-20\">\n          <TabNavigation activeTab={activeTab} onTabChange={setActiveTab} />\n\n          {user.role === \"admin\" ? (\n            <AdminDashboard />\n          ) : activeTab === \"tasks\" ? (\n            <TasksView\n              selectedCategory={selectedCategory}\n              selectedFilter={selectedFilter}\n              onCategoryChange={setSelectedCategory}\n              onFilterChange={setSelectedFilter}\n            />\n          ) : (\n            <ProgressView />\n          )}\n        </div>\n\n        <BottomNavigation\n          activeTab={user.role === \"admin\" ? \"admin\" : activeTab === \"tasks\" ? \"tasks\" : \"progress\"}\n          onTabChange={(tab) => {\n            if (tab === \"profile\") {\n              setShowProfile(true)\n            } else if (user.role !== \"admin\") {\n              setActiveTab(tab as \"tasks\" | \"progress\")\n            }\n          }}\n        />\n\n        {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}\n      </div>\n    </div>\n  )\n}"
+      },
+      "globals.css": {
+        "type": "stylesheet",
+        "description": "Global CSS with pixel art styling and mobile optimizations",
+        "code": "@tailwind base;\n@tailwind components;\n@tailwind utilities;\n\n@layer base {\n  :root {\n    --yellow-soft: #fff3b0;\n    --pink-soft: #f4c2c2;\n    --green-soft: #90c695;\n    --green-bright: #4ade80;\n    --orange: #fb923c;\n    --black: #000000;\n    --cream: #f5f5dc;\n  }\n}\n\n@layer components {\n  .pixel-font {\n    font-family: \"Courier New\", \"Monaco\", \"Menlo\", \"Consolas\", monospace;\n    font-weight: bold;\n    letter-spacing: 0.5px;\n  }\n\n  .pixel-border {\n    border: 3px solid #000000;\n    box-shadow: 3px 3px 0px #000000;\n  }\n\n  .pixel-button {\n    @apply pixel-border pixel-font text-xs p-2 cursor-pointer select-none transition-all;\n    min-height: 44px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  .pixel-card {\n    @apply pixel-border bg-white p-3;\n  }\n\n  .pixel-input {\n    @apply pixel-border p-2 bg-white text-black pixel-font text-sm;\n  }\n\n  .pixel-tab {\n    @apply pixel-font text-sm p-3 cursor-pointer select-none;\n    border: 3px solid #000000;\n    min-height: 48px;\n    display: flex;\n    align-items: center;\n    justify-content: center;\n  }\n\n  .pixel-tab.active {\n    @apply bg-pink-soft;\n  }\n\n  .pixel-tab.inactive {\n    @apply bg-white;\n  }\n}\n\nbody {\n  background-color: var(--cream);\n  margin: 0;\n  padding: 0;\n  min-height: 100vh;\n  -webkit-text-size-adjust: 100%;\n  -webkit-tap-highlight-color: transparent;\n}\n\n/* Mobile optimizations */\n@media (max-width: 768px) {\n  .pixel-font {\n    letter-spacing: 0.3px;\n  }\n\n  .pixel-border {\n    border: 2px solid #000000;\n    box-shadow: 2px 2px 0px #000000;\n  }\n}"
+      }
+    },
+    "components": {
+      "providers": {
+        "app-provider.tsx": {
+          "type": "context-provider",
+          "description": "Main application context with admin user management",
+          "code": "\"use client\"\n\nimport { createContext, useContext, useState, type ReactNode } from \"react\"\n\ninterface User {\n  address: string\n  role: \"admin\" | \"partner\" | \"contributor\"\n  name: string\n  avatar: string\n  totalEarned?: number\n  tasksCompleted?: number\n  tasksCreated?: number\n  rewardsDistributed?: number\n  usersManaged?: number\n  totalPlatformValue?: number\n}\n\ninterface Task {\n  id: string\n  title: string\n  category: \"Education\" | \"Research\" | \"Event\" | \"Partner Task\" | \"Other\"\n  reward: number\n  complexity: \"Low\" | \"Medium\" | \"High\"\n  validationType: \"Manual\" | \"File Upload\" | \"Auto\" | \"URL Submission\"\n  instructions: string\n  slots: number\n  deadline?: string\n  status: \"Active\" | \"Pending\" | \"Completed\" | \"Claimed\"\n  createdBy: string\n  claimedBy?: string\n  submittedProof?: string\n}\n\ninterface AppContextType {\n  user: User | null\n  tasks: Task[]\n  connectWallet: (walletType: string) => void\n  createTask: (task: Omit<Task, \"id\" | \"createdBy\" | \"status\">) => void\n  claimTask: (taskId: string) => void\n  submitTask: (taskId: string, proof: string) => void\n  approveTask: (taskId: string) => void\n  deleteTask: (taskId: string) => void\n  banUser: (userAddress: string) => void\n}\n\nconst AppContext = createContext<AppContextType | undefined>(undefined)\n\nconst mockTasks: Task[] = [\n  {\n    id: \"1\",\n    title: \"Complete Celo DeFi Tutorial\",\n    category: \"Education\",\n    reward: 5,\n    complexity: \"Low\",\n    validationType: \"URL Submission\",\n    instructions: \"Complete the Celo DeFi tutorial and submit the completion certificate URL\",\n    slots: 10,\n    status: \"Active\",\n    createdBy: \"0x1234...partner\",\n  },\n  {\n    id: \"2\",\n    title: \"Research Web3 Impact Projects\",\n    category: \"Research\",\n    reward: 15,\n    complexity: \"Medium\",\n    validationType: \"File Upload\",\n    instructions: \"Research and document 5 Web3 projects making social impact. Submit a 2-page report.\",\n    slots: 5,\n    status: \"Active\",\n    createdBy: \"0x1234...partner\",\n  },\n  {\n    id: \"3\",\n    title: \"Create Social Media Content\",\n    category: \"Partner Task\",\n    reward: 50,\n    complexity: \"Medium\",\n    validationType: \"Manual\",\n    instructions: \"Design 3 Instagram posts about sustainable farming in Chapada region\",\n    slots: 2,\n    status: \"Pending\",\n    createdBy: \"0x1234...partner\",\n    claimedBy: \"0x5678...contributor\",\n    submittedProof: \"Instagram posts created and uploaded\",\n  },\n]\n\nexport function AppProvider({ children }: { children: ReactNode }) {\n  const [user, setUser] = useState<User | null>(null)\n  const [tasks, setTasks] = useState<Task[]>(mockTasks)\n\n  const connectWallet = (walletType: string) => {\n    // Mock admin user connection\n    const mockUser: User = {\n      address: \"0xADMIN1234567890\",\n      role: \"admin\",\n      name: \"System Administrator\",\n      avatar: \"👑\",\n      usersManaged: 156,\n      totalPlatformValue: 2450,\n      tasksCreated: 25,\n      rewardsDistributed: 1200,\n    }\n    setUser(mockUser)\n  }\n\n  const createTask = (taskData: Omit<Task, \"id\" | \"createdBy\" | \"status\">) => {\n    const newTask: Task = {\n      ...taskData,\n      id: Date.now().toString(),\n      createdBy: user?.address || \"\",\n      status: \"Active\",\n    }\n    setTasks((prev) => [...prev, newTask])\n  }\n\n  const claimTask = (taskId: string) => {\n    setTasks((prev) =>\n      prev.map((task) =>\n        task.id === taskId ? { ...task, status: \"Claimed\" as const, claimedBy: user?.address } : task,\n      ),\n    )\n  }\n\n  const submitTask = (taskId: string, proof: string) => {\n    setTasks((prev) =>\n      prev.map((task) => (task.id === taskId ? { ...task, status: \"Pending\" as const, submittedProof: proof } : task)),\n    )\n  }\n\n  const approveTask = (taskId: string) => {\n    setTasks((prev) => prev.map((task) => (task.id === taskId ? { ...task, status: \"Completed\" as const } : task)))\n  }\n\n  const deleteTask = (taskId: string) => {\n    setTasks((prev) => prev.filter((task) => task.id !== taskId))\n  }\n\n  const banUser = (userAddress: string) => {\n    // Mock ban user functionality\n    console.log(`User ${userAddress} has been banned by admin`)\n  }\n\n  return (\n    <AppContext.Provider\n      value={{\n        user,\n        tasks,\n        connectWallet,\n        createTask,\n        claimTask,\n        submitTask,\n        approveTask,\n        deleteTask,\n        banUser,\n      }}\n    >\n      {children}\n    </AppContext.Provider>\n  )\n}\n\nexport const useApp = () => {\n  const context = useContext(AppContext)\n  if (context === undefined) {\n    throw new Error(\"useApp must be used within an AppProvider\")\n  }\n  return context\n}"
+        }
+      },
+      "Header.tsx": {
+        "type": "component",
+        "description": "Application header with admin indicators",
+        "features": ["Admin crown badge", "Balance display", "Profile access"]
+      },
+      "AdminDashboard.tsx": {
+        "type": "component",
+        "description": "Complete admin dashboard with management tools",
+        "features": ["Platform statistics", "User management", "Task approval", "System monitoring"]
+      },
+      "TasksView.tsx": {
+        "type": "component",
+        "description": "Task browsing and filtering interface",
+        "features": ["Task dashboard", "Category filters", "Task cards"]
+      },
+      "ProgressView.tsx": {
+        "type": "component",
+        "description": "User progress tracking interface",
+        "features": ["Progress statistics", "Empty state handling"]
+      },
+      "ProfileModal.tsx": {
+        "type": "component",
+        "description": "User profile modal with admin features",
+        "features": ["Admin tools", "User information", "Settings"]
+      },
+      "TabNavigation.tsx": {
+        "type": "component",
+        "description": "Main tab navigation between Tasks and Progress"
+      },
+      "BottomNavigation.tsx": {
+        "type": "component",
+        "description": "Mobile bottom navigation bar"
+      }
+    },
+    "tailwind.config.ts": {
+      "type": "configuration",
+      "description": "Tailwind CSS configuration with custom colors and pixel styling"
+    }
+  },
+  "designSystem": {
+    "colors": {
+      "primary": "#F4C2C2",
+      "secondary": "#FFF3B0",
+      "accent": "#90C695",
+      "success": "#4ADE80",
+      "warning": "#FB923C",
+      "background": "#F5F5DC",
+      "text": "#000000"
+    },
+    "typography": {
+      "fontFamily": "Courier New, Monaco, Menlo, Consolas, monospace",
+      "fontWeight": "bold",
+      "letterSpacing": "0.5px"
+    },
+    "spacing": {
+      "borders": "3px solid black (2px on mobile)",
+      "shadows": "3px 3px 0px black (2px on mobile)",
+      "padding": "12px default",
+      "minTouchTarget": "44px"
+    }
+  },
+  "userRoles": {
+    "admin": {
+      "permissions": ["manage_users", "approve_tasks", "delete_tasks", "ban_users", "view_analytics"],
+      "features": ["Admin Dashboard", "System Monitoring", "User Moderation", "Platform Analytics"]
+    },
+    "partner": {
+      "permissions": ["create_tasks", "approve_submissions", "manage_own_tasks"],
+      "features": ["Task Creation", "Submission Review", "Analytics"]
+    },
+    "contributor": {
+      "permissions": ["claim_tasks", "submit_work", "view_progress"],
+      "features": ["Task Browser", "Progress Tracking", "Earnings"]
+    }
+  },
+  "mockData": {
+    "adminUser": {
+      "address": "0xADMIN1234567890",
+      "role": "admin",
+      "name": "System Administrator",
+      "avatar": "👑",
+      "usersManaged": 156,
+      "totalPlatformValue": 2450,
+      "tasksCreated": 25,
+      "rewardsDistributed": 1200
+    },
+    "sampleTasks": [
+      {
+        "title": "Complete Celo DeFi Tutorial",
+        "category": "Education",
+        "reward": 5,
+        "complexity": "Low"
+      },
+      {
+        "title": "Research Web3 Impact Projects",
+        "category": "Research",
+        "reward": 15,
+        "complexity": "Medium"
+      },
+      {
+        "title": "Create Social Media Content",
+        "category": "Partner Task",
+        "reward": 50,
+        "complexity": "Medium"
+      }
+    ]
+  },
+  "technicalSpecs": {
+    "framework": "Next.js 15",
+    "styling": "Tailwind CSS",
+    "stateManagement": "React Context",
+    "deployment": "Vercel",
+    "mobileFirst": true,
+    "responsive": true,
+    "accessibility": "WCAG compliant touch targets"
+  },
+  "futureIntegrations": {
+    "blockchain": "Celo",
+    "wallets": ["Valora", "MiniPay", "MetaMask"],
+    "tokens": ["cUSD", "CELO"],
+    "smartContracts": "Task management and payments",
+    "notifications": "Push notifications for task updates"
+  }
+}
