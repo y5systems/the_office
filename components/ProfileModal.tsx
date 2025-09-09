@@ -7,7 +7,7 @@ interface ProfileModalProps {
 }
 
 export default function ProfileModal({ onClose }: ProfileModalProps) {
-  const { user } = useApp()
+  const { user, web3 } = useApp()
 
   if (!user) return null
 
@@ -105,9 +105,23 @@ export default function ProfileModal({ onClose }: ProfileModalProps) {
         {/* Wallet */}
         <div className="mb-4">
           <h3 className="pixel-font text-sm mb-2">WALLET</h3>
-          <div className="pixel-border bg-gray-100 p-3 flex justify-between items-center gap-2">
-            <span className="pixel-font text-xs truncate">{user.address}</span>
-            <button className="pixel-button bg-pink-soft text-xs flex-shrink-0">DISCONNECT</button>
+          <div className="pixel-border bg-gray-100 p-3 space-y-2">
+            <div className="pixel-font text-xs truncate">{user.address}</div>
+            {web3.isConnected && web3.balance && (
+              <div className="pixel-font text-xs text-gray-600">
+                Balance: {web3.balance} cUSD
+              </div>
+            )}
+            {web3.isMiniPay && (
+              <div className="pixel-font text-xs text-gray-500">
+                💳 Connected via MiniPay
+              </div>
+            )}
+            {!web3.isMiniPay && (
+              <div className="flex justify-end">
+                <button className="pixel-button bg-pink-soft text-xs">DISCONNECT</button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -130,7 +144,9 @@ export default function ProfileModal({ onClose }: ProfileModalProps) {
         </div>
 
         {/* Logout */}
-        <button className="pixel-button bg-red-300 w-full text-center py-3">LOGOUT</button>
+        {!web3.isMiniPay && (
+          <button className="pixel-button bg-red-300 w-full text-center py-3">LOGOUT</button>
+        )}
       </div>
     </div>
   )

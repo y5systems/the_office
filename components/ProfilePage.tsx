@@ -11,7 +11,7 @@ interface ProfilePageProps {
 }
 
 export default function ProfilePage({ onNavigateToBlog, onNavigateToAbout, onNavigateToFeatures }: ProfilePageProps) {
-  const { user, logout, tasks, connectWallet } = useApp()
+  const { user, logout, tasks, connectWallet, web3 } = useApp()
   const [showWalletMenu, setShowWalletMenu] = useState(false)
   const [showCreateOrgModal, setShowCreateOrgModal] = useState(false)
 
@@ -415,9 +415,19 @@ export default function ProfilePage({ onNavigateToBlog, onNavigateToAbout, onNav
         <div className="space-y-2">
           <button className="pixel-button bg-blue-200 w-full text-left">🔔 Notification Settings</button>
           <button className="pixel-button bg-green-200 w-full text-left">🔐 Security Settings</button>
-          <button onClick={logout} className="pixel-button bg-red-300 w-full text-center py-3">
-            🚪 Logout
-          </button>
+          {/* Hide logout button in MiniPay */}
+          {!web3.isMiniPay && (
+            <button onClick={logout} className="pixel-button bg-red-300 w-full text-center py-3">
+              🚪 Logout
+            </button>
+          )}
+          {web3.isMiniPay && (
+            <div className="pixel-border bg-gray-100 p-3 text-center">
+              <div className="pixel-font text-xs text-gray-500">
+                💳 Signed in via MiniPay
+              </div>
+            </div>
+          )}
         </div>
       </div>
 

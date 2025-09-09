@@ -68,7 +68,7 @@ export default function HomePage({
                   <h3 className="pixel-font text-responsive-sm font-bold mb-1">{task.title}</h3>
                   <p className="text-responsive-xs text-gray-600 mb-2 line-clamp-2">{task.instructions}</p>
                   <div className="flex items-center gap-3 text-responsive-xs text-gray-500 mb-2 flex-wrap">
-                    <span>💰 {task.reward} USDC</span>
+                    <span>💰 {task.reward} cUSD</span>
                     <span>👥 {task.slots} slots</span>
                     <span>⏰ {getTimeAgo(task.createdAt)}</span>
                     <span

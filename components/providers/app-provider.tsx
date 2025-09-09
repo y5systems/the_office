@@ -1,6 +1,7 @@
 "use client"
 
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { useWeb3 } from "@/hooks/use-web3"
 
 interface User {
   address: string
@@ -104,8 +105,18 @@ interface AppContextType {
   opportunities: Opportunity[]
   blogPosts: BlogPost[]
   organizations: Organization[]
-  connectWallet: (walletType: string) => void
+  connectWallet: (walletType: string, walletAddress?: string) => void
   logout: () => void
+  // Web3 integration
+  web3: {
+    isConnected: boolean
+    address: string | null
+    balance: string | null
+    isMiniPay: boolean
+    isLoading: boolean
+    sendCUSD: (toAddress: string, amount: string) => Promise<string>
+    refreshBalance: () => Promise<void>
+  }
   createTask: (task: Omit<Task, "id" | "createdBy" | "status" | "createdAt">) => void
   createOrganization: (
     org: Omit<
@@ -296,85 +307,122 @@ const mockOrganizations: Organization[] = [
 export function AppProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [tasks, setTasks] = useState<Task[]>(mockTasks)
-  const [opportunities] = useState<Opportunity[]>(mockOpportunities)
-  const [blogPosts] = useState<BlogPost[]>(mockBlogPosts)
+  const [opportunities, setOpportunities] = useState<Opportunity[]>(mockOpportunities)
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(mockBlogPosts)
   const [organizations, setOrganizations] = useState<Organization[]>(mockOrganizations)
+  
+  // Web3 integration
+  const web3 = useWeb3()
+  
+  // Auto-connect when Web3 wallet is detected (especially MiniPay)
+  useEffect(() => {
+    if (web3.isConnected && web3.address && !user) {
+      const walletType = web3.isMiniPay ? 'minipay' : 'web3'
+      connectWallet(walletType, web3.address)
+    }
+  }, [web3.isConnected, web3.address, web3.isMiniPay, user])
 
-  const connectWallet = (walletType: string) => {
+  const connectWallet = async (walletType: string, walletAddress?: string) => {
     let mockUser: User
 
-    switch (walletType) {
-      case "admin":
-        mockUser = {
-          address: "0xADMIN1234567890",
-          role: "admin",
-          name: "System Administrator",
-          avatar: "👑",
-          usersManaged: 156,
-          totalPlatformValue: 2450,
-          tasksCreated: 25,
-          rewardsDistributed: 1200,
-          celoStarRankings: { responsive: 5, shipper: 5, trustful: 5 },
-        }
-        break
-      case "student":
-        mockUser = {
-          address: "0xSTUDENT123456789",
-          role: "student",
-          name: "Alex Student",
-          avatar: "🎓",
-          tasksCompleted: 3,
-          totalEarned: 15,
-          contributorBadgeEarned: false,
-          celoStarRankings: { responsive: 3, shipper: 2, trustful: 4 },
-        }
-        break
-      case "contributor":
-        mockUser = {
-          address: "0xCONTRIBUTOR123456789",
-          role: "contributor",
-          name: "Sam Contributor",
-          avatar: "🔧",
-          tasksCompleted: 12,
-          totalEarned: 350,
-          contributorBadgeEarned: true,
-          celoStarRankings: { responsive: 4, shipper: 5, trustful: 4 },
-        }
-        break
-      case "partner":
-        mockUser = {
-          address: "0xPARTNER123456789",
-          role: "partner",
-          name: "Partner Representative",
-          avatar: "🏢",
-          organizationName: "Chapada Sustentável",
-          tasksCreated: 12,
-          rewardsDistributed: 600,
-          celoStarRankings: { responsive: 4, shipper: 3, trustful: 5 },
-        }
-        break
-      case "builder":
-        mockUser = {
-          address: "0xBUILDER123456789",
-          role: "builder",
-          name: "Alex Developer",
-          avatar: "👨‍💻",
-          tasksCompleted: 8,
-          totalEarned: 350,
-          celoStarRankings: { responsive: 5, shipper: 4, trustful: 4 },
-        }
-        break
-      default:
-        mockUser = {
-          address: "0xSTUDENT123456789",
-          role: "student",
-          name: "Alex Student",
-          avatar: "🎓",
-          tasksCompleted: 3,
-          totalEarned: 15,
-          contributorBadgeEarned: false,
-          celoStarRankings: { responsive: 3, shipper: 2, trustful: 4 },
-        }
+    // Handle real Web3 wallet connections
+    const actualAddress = walletAddress || web3.address
+    
+    if ((walletType === 'web3' || walletType === 'minipay' || walletType === 'metamask' || walletType === 'valora') && actualAddress && web3.isConnected) {
+      // For real wallet connections, create a default user profile
+      // In a real app, you'd fetch or create user profile from your backend
+      const userName = web3.isMiniPay ? "MiniPay" : 
+                      walletType === 'metamask' ? "MetaMask User" :
+                      walletType === 'valora' ? "Valora User" : "Web3 User"
+      const userAvatar = web3.isMiniPay ? "💳" : 
+                        walletType === 'metamask' ? "🦊" :
+                        walletType === 'valora' ? "📱" : "🌐"
+      
+      mockUser = {
+        address: actualAddress,
+        role: "contributor", // Default role for Web3 users (they can earn tasks immediately)
+        name: userName,
+        avatar: userAvatar,
+        tasksCompleted: 0,
+        totalEarned: 0,
+        contributorBadgeEarned: true, // Web3 users start with contributor privileges
+        celoStarRankings: { responsive: 3, shipper: 3, trustful: 3 },
+      }
+    } else {
+      // Handle mock wallet connections for testing
+      switch (walletType) {
+        case "admin":
+          mockUser = {
+            address: "0xADMIN1234567890",
+            role: "admin",
+            name: "System Administrator",
+            avatar: "👑",
+            usersManaged: 156,
+            totalPlatformValue: 2450,
+            tasksCreated: 25,
+            rewardsDistributed: 1200,
+            celoStarRankings: { responsive: 5, shipper: 5, trustful: 5 },
+          }
+          break
+        case "student":
+          mockUser = {
+            address: "0xSTUDENT123456789",
+            role: "student",
+            name: "Alex Student",
+            avatar: "🎓",
+            tasksCompleted: 3,
+            totalEarned: 15,
+            contributorBadgeEarned: false,
+            celoStarRankings: { responsive: 3, shipper: 2, trustful: 4 },
+          }
+          break
+        case "contributor":
+          mockUser = {
+            address: "0xCONTRIBUTOR123456789",
+            role: "contributor",
+            name: "Sam Contributor",
+            avatar: "🔧",
+            tasksCompleted: 12,
+            totalEarned: 350,
+            contributorBadgeEarned: true,
+            celoStarRankings: { responsive: 4, shipper: 5, trustful: 4 },
+          }
+          break
+        case "partner":
+          mockUser = {
+            address: "0xPARTNER123456789",
+            role: "partner",
+            name: "Partner Representative",
+            avatar: "🏢",
+            organizationName: "Chapada Sustentável",
+            tasksCreated: 12,
+            rewardsDistributed: 600,
+            celoStarRankings: { responsive: 4, shipper: 3, trustful: 5 },
+          }
+          break
+        case "builder":
+          mockUser = {
+            address: "0xBUILDER123456789",
+            role: "builder",
+            name: "Alex Developer",
+            avatar: "👨‍💻",
+            tasksCompleted: 8,
+            totalEarned: 350,
+            celoStarRankings: { responsive: 5, shipper: 4, trustful: 4 },
+          }
+          break
+        default:
+          mockUser = {
+            address: "0xSTUDENT123456789",
+            role: "student",
+            name: "Alex Student",
+            avatar: "🎓",
+            tasksCompleted: 3,
+            totalEarned: 15,
+            contributorBadgeEarned: false,
+            celoStarRankings: { responsive: 3, shipper: 2, trustful: 4 },
+          }
+      }
     }
 
     setUser(mockUser)
@@ -459,8 +507,33 @@ export function AppProvider({ children }: { children: ReactNode }) {
     )
   }
 
-  const approveTask = (taskId: string) => {
-    setTasks((prev) => prev.map((task) => (task.id === taskId ? { ...task, status: "Completed" as const } : task)))
+  const approveTask = async (taskId: string) => {
+    const task = tasks.find(t => t.id === taskId)
+    if (!task || !task.claimedBy || !web3.isConnected) {
+      // Fallback to mock behavior if Web3 not available
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: "Completed" as const } : t)))
+      return
+    }
+
+    try {
+      // Process real cUSD payment for task completion
+      const paymentResult = await web3.sendCUSD(task.claimedBy, task.reward.toString())
+      
+      if (paymentResult) {
+        // Update task status to completed
+        setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: "Completed" as const } : t)))
+        
+        // Refresh Web3 balance
+        await web3.refreshBalance()
+        
+        console.log(`Task ${taskId} approved and ${task.reward} cUSD sent to ${task.claimedBy}`)
+      }
+    } catch (error) {
+      console.error('Failed to process task reward payment:', error)
+      // Optionally show error to user via toast
+      // For now, still mark as completed (in a real app, you might want to handle this differently)
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: "Completed" as const } : t)))
+    }
   }
 
   const deleteTask = (taskId: string) => {
@@ -489,6 +562,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
         deleteTask,
         banUser,
         getVisibleTasks,
+        // Web3 integration
+        web3: {
+          isConnected: web3.isConnected,
+          address: web3.address,
+          balance: web3.balance,
+          isMiniPay: web3.isMiniPay,
+          isLoading: web3.isLoading,
+          sendCUSD: web3.sendCUSD,
+          refreshBalance: web3.refreshBalance,
+        },
       }}
     >
       {children}

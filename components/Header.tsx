@@ -2,14 +2,14 @@
 
 import { useState } from "react"
 import { useApp } from "@/components/providers/app-provider"
+import { ComposerWallet } from "./ComposerWallet"
 
 interface HeaderProps {
   onProfileClick: () => void
 }
 
 export default function Header({ onProfileClick }: HeaderProps) {
-  const { user, connectWallet, logout } = useApp()
-  const [showWalletMenu, setShowWalletMenu] = useState(false)
+  const { user, connectWallet, logout, web3 } = useApp()
   const [showUserDropdown, setShowUserDropdown] = useState(false)
 
   const getUserDisplayName = () => {
@@ -36,21 +36,14 @@ export default function Header({ onProfileClick }: HeaderProps) {
     return user.avatar
   }
 
-  const handleWalletConnect = (walletType: string) => {
-    connectWallet(walletType)
-    setShowWalletMenu(false)
-  }
-
   const handleUserDropdownToggle = () => {
     if (user) {
       setShowUserDropdown(!showUserDropdown)
-    } else {
-      setShowWalletMenu(!showWalletMenu)
     }
   }
 
   const handleDisconnectWallet = () => {
-    // Just close dropdown for now - wallet disconnect logic can be added later
+    logout()
     setShowUserDropdown(false)
   }
 
@@ -79,69 +72,67 @@ export default function Header({ onProfileClick }: HeaderProps) {
         {user && (
           <div className="pixel-border bg-green-soft text-white px-2 py-1 md:px-3 md:py-2">
             <span className="pixel-font text-responsive-xs">
-              {user.role === "admin" ? `${user.totalPlatformValue} USDC` : `${user.totalEarned || 0} USDC`}
+              {web3.isConnected && web3.balance 
+                ? `cUSD: ${web3.balance}`
+                : user.role === "admin" 
+                  ? `cUSD: ${user.totalPlatformValue || '0.00'}` 
+                  : `cUSD: ${(user.totalEarned || 0).toFixed(2)}`
+              }
             </span>
           </div>
         )}
 
         <div className="relative">
-          <button
-            onClick={handleUserDropdownToggle}
-            className="pixel-border bg-pink-soft text-black px-3 py-1 md:px-4 md:py-2 hover:bg-yellow-soft transition-colors min-h-[40px] md:min-h-[44px]"
-          >
-            <span className="pixel-font text-responsive-sm">{user ? getUserDisplayName() : "Login"}</span>
-          </button>
-
-          {/* User Dropdown Menu */}
-          {showUserDropdown && user && (
-            <div className="absolute right-0 top-full mt-2 pixel-card bg-white min-w-[200px] md:min-w-[240px] z-50">
-              <div className="space-y-2">
-                <div className="p-2 border-b-2 border-gray-200">
-                  <div className="pixel-font text-xs text-gray-600 mb-1">User: {user.name}</div>
-                  <div className="pixel-font text-xs text-gray-600">
-                    Wallet: {user.address.slice(0, 8)}...{user.address.slice(-4)}
+          {/* Composer Kit Wallet Integration */}
+          {!user ? (
+            <ComposerWallet />
+          ) : (
+            <>
+              <button
+                onClick={handleUserDropdownToggle}
+                className="pixel-border bg-pink-soft text-black px-3 py-1 md:px-4 md:py-2 hover:bg-yellow-soft transition-colors min-h-[40px] md:min-h-[44px] pixel-font text-responsive-sm"
+              >
+                {getUserDisplayName()}
+              </button>
+              
+              {showUserDropdown && (
+                <div className="absolute right-0 top-full mt-2 pixel-card bg-white min-w-[200px] md:min-w-[240px] z-50">
+                  <div className="space-y-2">
+                    <div className="p-2 border-b-2 border-gray-200">
+                      <div className="pixel-font text-xs text-gray-600 mb-1">
+                        User: {user.name}
+                      </div>
+                      <div className="pixel-font text-xs text-gray-600">
+                        Wallet: {user.address.slice(0, 8)}...{user.address.slice(-4)}
+                      </div>
+                      {web3.isConnected && web3.balance && (
+                        <div className="pixel-font text-xs text-gray-600 mt-1">
+                          Balance: {web3.balance} cUSD
+                        </div>
+                      )}
+                    </div>
+                    {/* Hide disconnect/logout buttons in MiniPay */}
+                    {!web3.isMiniPay && (
+                      <>
+                        <button onClick={handleDisconnectWallet} className="pixel-button bg-orange w-full text-left">
+                          🔌 Disconnect Wallet
+                        </button>
+                        <button onClick={handleLogout} className="pixel-button bg-red-300 w-full text-left">
+                          🚪 Logout
+                        </button>
+                      </>
+                    )}
+                    {web3.isMiniPay && (
+                      <div className="p-2 text-center">
+                        <div className="pixel-font text-xs text-gray-500">
+                          💳 Connected via MiniPay
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <button onClick={handleDisconnectWallet} className="pixel-button bg-orange w-full text-left">
-                  🔌 Disconnect Wallet
-                </button>
-                <button onClick={handleLogout} className="pixel-button bg-red-300 w-full text-left">
-                  🚪 Logout
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Wallet Connection Menu */}
-          {showWalletMenu && !user && (
-            <div className="absolute right-0 top-full mt-2 pixel-card bg-white min-w-[200px] md:min-w-[240px] z-50">
-              <div className="space-y-2">
-                <button
-                  onClick={() => handleWalletConnect("metamask")}
-                  className="pixel-button bg-orange w-full text-left"
-                >
-                  🦊 MetaMask
-                </button>
-                <button
-                  onClick={() => handleWalletConnect("farcaster")}
-                  className="pixel-button bg-pink-soft w-full text-left"
-                >
-                  🟣 Farcaster
-                </button>
-                <button
-                  onClick={() => handleWalletConnect("minipay")}
-                  className="pixel-button bg-navy-dark text-white w-full text-left"
-                >
-                  💳 MiniPay
-                </button>
-                <button
-                  onClick={() => handleWalletConnect("valora")}
-                  className="pixel-button bg-green-soft text-white w-full text-left"
-                >
-                  📱 Valora
-                </button>
-              </div>
-            </div>
+              )}
+            </>
           )}
         </div>
       </div>
