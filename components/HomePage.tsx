@@ -57,7 +57,7 @@ export default function HomePage({
           <div className="pixel-card bg-gradient-to-r from-yellow-soft to-pink-soft">
             <h2 className="pixel-font text-responsive-lg mb-4">🎭 Test Different Users</h2>
             <p className="text-responsive-xs text-gray-700 mb-4">
-              Switch between different user roles to test the app (Desktop only - in MiniPay, you'll automatically connect as your admin account)
+              Switch between different user roles to test the app (Desktop only)
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
               <button
