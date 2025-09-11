@@ -17,7 +17,7 @@ export default function HomePage({
   onViewTask,
   onNavigateToFeatures,
 }: HomePageProps) {
-  const { tasks, opportunities, claimTask } = useApp()
+  const { user, tasks, opportunities, claimTask, connectWallet, web3 } = useApp()
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString)
@@ -46,8 +46,76 @@ export default function HomePage({
     claimTask(taskId)
   }
 
+  // Show user switching options if no Web3 wallet is connected (desktop testing)
+  const showUserSwitching = !web3.isConnected
+
   return (
     <div className="space-y-6 mobile-container pb-6">
+      {/* User Switching Section (Desktop Testing Only) */}
+      {showUserSwitching && (
+        <section>
+          <div className="pixel-card bg-gradient-to-r from-yellow-soft to-pink-soft">
+            <h2 className="pixel-font text-responsive-lg mb-4">🎭 Test Different Users</h2>
+            <p className="text-responsive-xs text-gray-700 mb-4">
+              Switch between different user roles to test the app (Desktop only - in MiniPay, you'll automatically connect as your admin account)
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:gap-3">
+              <button
+                onClick={() => connectWallet('admin')}
+                className={`pixel-button text-responsive-xs p-3 text-center ${
+                  user?.role === 'admin' ? 'bg-purple-300' : 'bg-white'
+                }`}
+              >
+                <div className="text-lg mb-1">👑</div>
+                <div className="pixel-font">Admin</div>
+              </button>
+              <button
+                onClick={() => connectWallet('partner')}
+                className={`pixel-button text-responsive-xs p-3 text-center ${
+                  user?.role === 'partner' ? 'bg-purple-300' : 'bg-white'
+                }`}
+              >
+                <div className="text-lg mb-1">🏢</div>
+                <div className="pixel-font">Partner</div>
+              </button>
+              <button
+                onClick={() => connectWallet('contributor')}
+                className={`pixel-button text-responsive-xs p-3 text-center ${
+                  user?.role === 'contributor' ? 'bg-purple-300' : 'bg-white'
+                }`}
+              >
+                <div className="text-lg mb-1">🔧</div>
+                <div className="pixel-font">Contributor</div>
+              </button>
+              <button
+                onClick={() => connectWallet('builder')}
+                className={`pixel-button text-responsive-xs p-3 text-center ${
+                  user?.role === 'builder' ? 'bg-purple-300' : 'bg-white'
+                }`}
+              >
+                <div className="text-lg mb-1">👨‍💻</div>
+                <div className="pixel-font">Builder</div>
+              </button>
+              <button
+                onClick={() => connectWallet('student')}
+                className={`pixel-button text-responsive-xs p-3 text-center ${
+                  user?.role === 'student' ? 'bg-purple-300' : 'bg-white'
+                }`}
+              >
+                <div className="text-lg mb-1">🎓</div>
+                <div className="pixel-font">Student</div>
+              </button>
+            </div>
+            {user && (
+              <div className="mt-4 pixel-border bg-gray-100 p-3">
+                <div className="text-responsive-xs">
+                  <strong>Current User:</strong> {user.name} ({user.role})
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
       {/* Latest Tasks Section */}
       <section>
         <div className="flex justify-between items-center mb-4">

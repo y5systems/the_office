@@ -18,7 +18,7 @@ import BottomNavigation from "@/components/BottomNavigation"
 import FeaturesPage from "@/components/FeaturesPage"
 
 export default function Home() {
-  const { user } = useApp()
+  const { user, web3, isLoading } = useApp()
   const [activeTab, setActiveTab] = useState<string>("home")
   const [showProfile, setShowProfile] = useState(false)
   const [currentView, setCurrentView] = useState<{
@@ -65,6 +65,12 @@ export default function Home() {
   const handleBackToMain = () => {
     setCurrentView({ type: "main" })
   }
+
+  const handleAdminPanelClick = () => {
+    setActiveTab("admin")
+    setCurrentView({ type: "main" })
+  }
+
 
   const handleNavigateToTasks = () => {
     setActiveTab("tasks")
@@ -146,7 +152,10 @@ export default function Home() {
   return (
     <div className="app-container">
       <div className="main-content">
-        <Header onProfileClick={() => setShowProfile(true)} />
+        <Header 
+          onProfileClick={() => setShowProfile(true)} 
+          onAdminPanelClick={handleAdminPanelClick}
+        />
 
         {/* Scrollable content area with proper spacing for fixed header and footer */}
         <div className="pt-[80px] pb-[80px] md:pt-[90px] md:pb-[90px] lg:pt-[100px] lg:pb-[100px] overflow-y-auto">

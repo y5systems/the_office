@@ -45,25 +45,31 @@ export const useWeb3 = () => {
 
   // Check if MiniPay is available and auto-connect
   const checkMiniPayConnection = async () => {
-    if (typeof window === 'undefined' || !window.ethereum) return
-
-    const isMiniPay = window.ethereum.isMiniPay === true
-    setWeb3State(prev => ({ ...prev, isMiniPay }))
-
-    if (isMiniPay) {
-      // Auto-connect to MiniPay
-      try {
-        const accounts = await window.ethereum.request({
-          method: 'eth_requestAccounts',
-          params: [],
-        })
-        
-        if (accounts && accounts[0]) {
-          await connectWallet(accounts[0])
-        }
-      } catch (error) {
-        console.error('Failed to auto-connect MiniPay:', error)
+    try {
+      if (typeof window === 'undefined' || !window.ethereum) {
+        return
       }
+
+      const isMiniPay = window.ethereum.isMiniPay === true
+      setWeb3State(prev => ({ ...prev, isMiniPay }))
+
+      if (isMiniPay) {
+        // Auto-connect to MiniPay
+        try {
+          const accounts = await window.ethereum.request({
+            method: 'eth_requestAccounts',
+            params: [],
+          })
+          
+          if (accounts && accounts[0]) {
+            await connectWallet(accounts[0])
+          }
+        } catch (error) {
+          console.error('Failed to auto-connect MiniPay:', error)
+        }
+      }
+    } catch (error) {
+      console.error('Error during Web3 initialization:', error)
     }
   }
 

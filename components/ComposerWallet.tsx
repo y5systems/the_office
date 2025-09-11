@@ -7,12 +7,12 @@ export function ComposerWallet() {
   const [showFallbackMenu, setShowFallbackMenu] = useState(false)
   const { user, connectWallet, web3 } = useApp()
   
-  // Hide login in MiniPay environment and auto-connect
+  // Hide menu when connected or in MiniPay
   useEffect(() => {
-    if (web3.isMiniPay && web3.isConnected && web3.address) {
+    if ((web3.isMiniPay && web3.isConnected && web3.address) || user) {
       setShowFallbackMenu(false)
     }
-  }, [web3.isMiniPay, web3.isConnected, web3.address])
+  }, [web3.isMiniPay, web3.isConnected, web3.address, user])
 
   const handleFallbackWalletConnect = (walletType: string) => {
     connectWallet(walletType)

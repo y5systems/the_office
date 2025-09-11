@@ -6,9 +6,10 @@ import { ComposerWallet } from "./ComposerWallet"
 
 interface HeaderProps {
   onProfileClick: () => void
+  onAdminPanelClick?: () => void
 }
 
-export default function Header({ onProfileClick }: HeaderProps) {
+export default function Header({ onProfileClick, onAdminPanelClick }: HeaderProps) {
   const { user, connectWallet, logout, web3 } = useApp()
   const [showUserDropdown, setShowUserDropdown] = useState(false)
 
@@ -111,6 +112,18 @@ export default function Header({ onProfileClick }: HeaderProps) {
                         </div>
                       )}
                     </div>
+                    {/* Admin Panel Access */}
+                    {user.role === "admin" && onAdminPanelClick && (
+                      <button 
+                        onClick={() => {
+                          onAdminPanelClick()
+                          setShowUserDropdown(false)
+                        }} 
+                        className="pixel-button bg-purple-300 w-full text-left"
+                      >
+                        👑 Admin Panel
+                      </button>
+                    )}
                     {/* Hide disconnect/logout buttons in MiniPay */}
                     {!web3.isMiniPay && (
                       <>
