@@ -61,7 +61,7 @@ export default function Header({ onProfileClick, onAdminPanelClick }: HeaderProp
         >
           <span className="pixel-font text-responsive-sm">{user?.role === "admin" ? "👑" : "TO"}</span>
         </div>
-        <h1 className="pixel-font text-responsive-lg">TheOffice</h1>
+        <h1 className="pixel-font text-responsive-lg">Balaio</h1>
         {user?.role === "admin" && (
           <span className="pixel-border bg-orange text-black px-2 py-1 md:px-3 md:py-2 text-responsive-xs pixel-font">
             ADMIN

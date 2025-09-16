@@ -1,10 +1,10 @@
-# 🏢 TheOffice - Web3 Learn2Earn Platform
+# 🏢 Balaio - Web3 Learn2Earn Platform
 
 A pixelated Web3 Learn2Earn task management application built on the Celo blockchain, connecting learners with opportunities in the Web3 ecosystem through task-based learning and earning.
 
 ## 🌟 Overview
 
-TheOffice bridges the gap between Web3 education and real-world opportunities, creating a sustainable ecosystem where learning directly translates to earning. Built with a mobile-first approach and featuring a distinctive pixel art aesthetic, the platform serves multiple user types with different capabilities and earning potential.
+Balaio bridges the gap between Web3 education and real-world opportunities, creating a sustainable ecosystem where learning directly translates to earning. Built with a mobile-first approach and featuring a distinctive pixel art aesthetic, the platform serves multiple user types with different capabilities and earning potential.
 
 ## 🎯 Key Features
 
@@ -274,10 +274,10 @@ Orkut-style community rating system across 6 categories:
 
 ### Installation
 1. Clone the repository:
-\`\`\`bash
-git clone https://github.com/your-org/theoffice-web3-app.git
-cd theoffice-web3-app
-\`\`\`
+```bash
+git clone https://github.com/your-org/balaio-web3-app.git
+cd balaio-web3-app
+```
 
 2. Install dependencies:
 \`\`\`bash
@@ -292,8 +292,8 @@ npm run dev
 4. Open [http://localhost:3000](http://localhost:3000) in your browser
 
 ### Project Structure
-\`\`\`
-theoffice-web3-app/
+```
+balaio-web3-app/
 ├── app/                    # Next.js app directory
 │   ├── layout.tsx         # Root layout
 │   ├── page.tsx           # Main application page
@@ -393,10 +393,10 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## 📞 Support & Community
 
-- **Email**: hello@theoffice.app
-- **Twitter**: @TheOfficeApp
+- **Email**: hello@balaio.xyz
+- **Twitter**: @BalaioApp
 - **Discord**: [Community Server]
-- **Documentation**: [docs.theoffice.app]
+- **Documentation**: [docs.balaio.xyz]
 
 ---
 

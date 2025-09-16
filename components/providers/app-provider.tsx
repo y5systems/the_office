@@ -250,7 +250,7 @@ const mockTasks: Task[] = [
 const mockOrganizations: Organization[] = [
   {
     id: "1",
-    name: "TheOffice",
+    name: "Balaio",
     description: "A co-working space and incubator for Web3 startups in Rio de Janeiro.",
     location: "Rio de Janeiro, Brazil",
     avatar: "/placeholder.svg?height=100&width=100",
@@ -260,10 +260,10 @@ const mockOrganizations: Organization[] = [
     mission: "To foster innovation and collaboration in the Web3 space.",
     tags: ["Web3", "Co-working", "Incubator"],
     socialLinks: {
-      twitter: "https://twitter.com/theoffice",
-      discord: "https://discord.gg/theoffice",
+      twitter: "https://twitter.com/balaio",
+      discord: "https://discord.gg/balaio",
     },
-    contactEmail: "contact@theoffice.xyz",
+    contactEmail: "contact@balaio.xyz",
     isPublic: true,
     createdBy: "0xADMIN1234567890",
     createdAt: "2023-01-01T00:00:00Z",

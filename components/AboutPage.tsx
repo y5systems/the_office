@@ -10,7 +10,7 @@ export default function AboutPage({ onNavigateToFeatures }: AboutPageProps) {
       {/* Hero Section */}
       <section className="pixel-card bg-gradient-to-r from-pink-soft to-yellow-soft">
         <div className="text-center py-6">
-          <h1 className="pixel-font text-2xl mb-2">🏢 TheOffice</h1>
+          <h1 className="pixel-font text-2xl mb-2">🏢 Balaio</h1>
           <p className="pixel-font text-sm mb-4">Web3 Learn2Earn Platform</p>
           <p className="text-xs text-gray-700 leading-relaxed">
             Connecting learners with opportunities in the Web3 ecosystem through task-based learning and earning.
@@ -22,7 +22,7 @@ export default function AboutPage({ onNavigateToFeatures }: AboutPageProps) {
       <section className="pixel-card">
         <h2 className="pixel-font text-lg mb-3">🎯 Our Mission</h2>
         <p className="text-sm text-gray-700 leading-relaxed mb-4">
-          TheOffice bridges the gap between Web3 education and real-world opportunities, creating a sustainable
+          Balaio bridges the gap between Web3 education and real-world opportunities, creating a sustainable
           ecosystem where learning directly translates to earning.
         </p>
         <div className="grid grid-cols-2 gap-3">
@@ -122,11 +122,11 @@ export default function AboutPage({ onNavigateToFeatures }: AboutPageProps) {
         <div className="space-y-2">
           <div className="flex items-center gap-2">
             <span>📧</span>
-            <span className="text-sm">hello@theoffice.app</span>
+            <span className="text-sm">hello@balaio.app</span>
           </div>
           <div className="flex items-center gap-2">
             <span>🐦</span>
-            <span className="text-sm">@TheOfficeApp</span>
+            <span className="text-sm">@BalaioApp</span>
           </div>
           <div className="flex items-center gap-2">
             <span>💬</span>
