@@ -1,14 +1,14 @@
 import { createWalletClient, createPublicClient, custom, http, getContract, parseEther, formatEther } from 'viem'
-import { celo, celoAlfajores } from 'viem/chains'
+import { celo, celoSepolia } from 'viem/chains'
 import { stableTokenABI } from '@celo/abis'
 
 // Contract addresses
 const STABLE_TOKEN_ADDRESS_MAINNET = "0x765DE816845861e75A25fCA122bb6898B8B1282a"
-const STABLE_TOKEN_ADDRESS_TESTNET = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+const STABLE_TOKEN_ADDRESS_TESTNET = "0xEF4d55D6dE8e8d73232827Cd1e9b2F2dBb45bC80" // Celo Sepolia cUSD
 
 // Use testnet for development, mainnet for production
 const isProduction = process.env.NODE_ENV === 'production'
-const currentChain = isProduction ? celo : celoAlfajores
+const currentChain = isProduction ? celo : celoSepolia
 const STABLE_TOKEN_ADDRESS = isProduction ? STABLE_TOKEN_ADDRESS_MAINNET : STABLE_TOKEN_ADDRESS_TESTNET
 
 // Public client for reading blockchain data
