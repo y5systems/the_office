@@ -2,6 +2,20 @@
 
 A pixelated Web3 Learn2Earn task management application built on the Celo blockchain, connecting learners with opportunities in the Web3 ecosystem through task-based learning and earning.
 
+## 📁 Monorepo Structure
+
+This project is organized as a monorepo using pnpm workspaces:
+
+```
+balaio/
+├── packages/
+│   ├── web/                 # Next.js web application
+│   └── contracts/           # Smart contracts (Foundry)
+├── pnpm-workspace.yaml      # Workspace configuration
+├── package.json             # Root package scripts
+└── README.md                # This file
+```
+
 ## 🌟 Overview
 
 Balaio bridges the gap between Web3 education and real-world opportunities, creating a sustainable ecosystem where learning directly translates to earning. Built with a mobile-first approach and featuring a distinctive pixel art aesthetic, the platform serves multiple user types with different capabilities and earning potential.
@@ -270,44 +284,57 @@ Orkut-style community rating system across 6 categories:
 
 ### Prerequisites
 - Node.js 18+ 
-- npm or yarn package manager
+- pnpm package manager (`npm install -g pnpm`)
+- Foundry (for smart contracts) - [Install Guide](https://book.getfoundry.sh/getting-started/installation)
 
 ### Installation
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-org/balaio-web3-app.git
-cd balaio-web3-app
+git clone https://github.com/your-org/balaio.git
+cd balaio
 ```
 
 2. Install dependencies:
-\`\`\`bash
-npm install
-\`\`\`
-
-3. Start the development server:
-\`\`\`bash
-npm run dev
-\`\`\`
-
-4. Open [http://localhost:3000](http://localhost:3000) in your browser
-
-### Project Structure
+```bash
+pnpm install
 ```
-balaio-web3-app/
-├── app/                    # Next.js app directory
-│   ├── layout.tsx         # Root layout
-│   ├── page.tsx           # Main application page
-│   └── globals.css        # Global styles
-├── components/            # React components
-│   ├── providers/         # Context providers
-│   ├── ui/               # Reusable UI components
-│   ├── HomePage.tsx      # Landing page
-│   ├── TasksPage.tsx     # Task browsing
-│   ├── ProfilePage.tsx   # User profiles
-│   └── ...               # Other components
-├── tailwind.config.ts    # Tailwind configuration
-└── README.md            # This file
-\`\`\`
+
+3. Set up environment variables:
+```bash
+cp packages/web/.env.example packages/web/.env.local
+cp packages/contracts/.env.example packages/contracts/.env
+# Edit the .env files with your values
+```
+
+4. Start the development server:
+```bash
+pnpm dev  # Runs the web app
+```
+
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+### Available Commands
+
+#### Root Commands
+```bash
+pnpm dev                # Run web development server
+pnpm build              # Build web app for production
+pnpm start              # Start production web server
+pnpm lint               # Lint web app code
+pnpm test:contracts     # Run smart contract tests
+pnpm deploy:contracts   # Deploy contracts to testnet
+```
+
+#### Package-Specific Commands
+```bash
+# Web package
+pnpm --filter @balaio/web dev
+pnpm --filter @balaio/web build
+
+# Contracts package
+pnpm --filter @balaio/contracts test
+pnpm --filter @balaio/contracts build
+```
 
 ## 🎨 Design Philosophy
 

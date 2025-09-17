@@ -1,0 +1,18 @@
+[profile.default]
+src = "src"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.29"
+optimizer = true
+optimizer_runs = 200
+gas_reports = ["BalaioEscrow"]
+
+[rpc_endpoints]
+celo = "https://forno.celo.org"
+celo-testnet = "https://alfajores-forno.celo-testnet.org"
+
+[etherscan]
+celo = { key = "${CELOSCAN_API_KEY}", url = "https://api.celoscan.io/api" }
+celo-testnet = { key = "${CELOSCAN_API_KEY}", url = "https://api-alfajores.celoscan.io/api" }
+
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

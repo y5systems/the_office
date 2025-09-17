@@ -1,0 +1,30 @@
+{
+  "name": "@balaio/contracts",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Balaio Smart Contracts",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "test:watch": "forge test --watch",
+    "test:coverage": "forge coverage",
+    "deploy:testnet": "forge script script/Deploy.s.sol --rpc-url celo-testnet --broadcast --verify",
+    "deploy:mainnet": "forge script script/Deploy.s.sol --rpc-url celo --broadcast --verify",
+    "clean": "forge clean",
+    "fmt": "forge fmt",
+    "gas": "forge test --gas-report",
+    "snapshot": "forge snapshot",
+    "anvil": "anvil --fork-url https://forno.celo.org"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum",
+    "smart-contracts",
+    "celo",
+    "foundry"
+  ]
+}
